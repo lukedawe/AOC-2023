@@ -1,37 +1,26 @@
 use crate::utils::{file_iterator, string_to_int};
 use core::panic;
 use regex::Regex;
-use std::vec;
 
 const DATA_PATH: &str = "./src/solutions/day2/input.txt";
 
 pub fn solve() {
-    let mut possible_games: Vec<u32> = vec![];
-    let mut game_number: u32 = 1;
-    let rgb_vals: [u32; 3] = [12, 13, 14];
+    let mut total_powers = 0;
     if let Ok(lines) = file_iterator::read_lines(DATA_PATH) {
         for line in lines {
             if let Ok(game) = line {
                 // there are red, green and blue cubes in the bag
+                let mut power = 1;
                 let greatest_vals_rgb = get_rgb_max(&game);
-                for (index, val) in rgb_vals.into_iter().enumerate() {
-                    if greatest_vals_rgb[index] > val {
-                        break;
-                    }
-                    if index == 2 {
-                        possible_games.push(game_number);
-                    }
+                for val in greatest_vals_rgb.into_iter() {
+                    power *= val;
                 }
+                total_powers += power;
             }
-            game_number += 1;
         }
     }
-    let mut sum: u32 = 0;
-    for game in possible_games.into_iter() {
-        sum += game;
-        println!("game: {}", game);
-    }
-    println!("Total: {}",sum);
+    println!("Total powers: {}", total_powers);
+    
 }
 
 /*
