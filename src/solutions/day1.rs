@@ -1,5 +1,4 @@
 use crate::utils::file_iterator;
-use std::{borrow::BorrowMut, f32::RADIX, ops::Add, ptr::null};
 
 const DATA_PATH: &str = "./src/solutions/day1/input.txt";
 

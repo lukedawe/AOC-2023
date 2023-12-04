@@ -34,7 +34,6 @@ fn get_rgb_max(line: &String) -> [u32; 3] {
     let mut results_array: [u32; 3] = [0, 0, 0];
     // find the colours and their number
     let re = Regex::new(r"(?P<value>\d+) (?P<colour>\w+)").unwrap();
-    // TODO: find the highest of each colour
     for pair in re.find_iter(line).map(|m| m.as_str()) {
         let caps = re.captures(pair).unwrap();
         // match statement them into the array
