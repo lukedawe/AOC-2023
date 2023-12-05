@@ -2,5 +2,5 @@ mod solutions;
 mod utils;
 
 fn main() {
-    solutions::day3::solve();
+    solutions::day4::solve();
 }
