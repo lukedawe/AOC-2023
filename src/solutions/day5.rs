@@ -1,9 +1,7 @@
-use regex::Regex;
+use std::{thread, time::Duration};
 
-use crate::utils::{
-    file_iterator,
-    string_to_int::string_to_int_u64,
-};
+use crate::utils::{file_iterator, string_to_int::string_to_int_u64};
+use regex::Regex;
 
 const DATA_PATH: &str = "./src/solutions/day5/input.txt";
 
@@ -52,7 +50,11 @@ pub fn solve() {
                         range_length: string_to_int_u64(&values["rl"].to_string()),
                     });
                 } else if line_ok == "" && line_no != 1 {
-                    println!("map found:{}, number of ranges: {}", current_map.name, current_map.ranges.len());
+                    println!(
+                        "map found:{}, number of ranges: {}",
+                        current_map.name,
+                        current_map.ranges.len()
+                    );
                     maps.push(current_map);
                     current_map = Map {
                         name: "".to_string(),
@@ -67,27 +69,41 @@ pub fn solve() {
 
     let mut current_num: i128;
 
-    for seed in seeds {
-        current_num = i128::from(seed);
-        println!("seed: {}", seed);
-        for map in maps.clone() {
-            for range in map.ranges {
-                let source_range = i128::from(range.source_range_start)..i128::from(range.source_range_start+range.range_length);
-                if source_range.contains(&current_num) {
-                    current_num = i128::from(range.destination_range_start) - i128::from(range.source_range_start) + current_num;
+    let mut number_found = false;
+    let mut index: i128 = 0;
+    while !number_found {
+        current_num = index;
+        for map_index in (0..maps.len()).rev() {
+            for range_index in 0..maps[map_index].ranges.len() {
+                let range: Range = maps[map_index].ranges[range_index];
+                let destination_range = i128::from(range.destination_range_start)
+                    ..i128::from(range.destination_range_start + range.range_length);
+                if destination_range.contains(&current_num) {
+                    current_num = i128::from(range.source_range_start)
+                        - i128::from(range.destination_range_start)
+                        + current_num;
                     break;
                 }
             }
-            println!("after {} map: {}", map.name, current_num);
         }
 
-        println!("after all maps: {}", current_num);
+        let mut seed_index = 0;
 
-        if current_num < result || result == 0 {
-            result = current_num;
+        while seed_index < seeds.len() {
+            let seed_range = i128::from(seeds[seed_index])
+                ..i128::from(seeds[seed_index] + seeds[seed_index + 1]);
+            // println!("seed range: {}..{}", seed_range.start, seed_range.end);
+            if seed_range.contains(&current_num) {
+                number_found = true;
+                result = current_num;
+                break;
+            } else {
+            }
+            seed_index += 2;
         }
+
+        index += 1;
     }
 
-    println!("result: {}", result);  
-
+    println!("result: {}", index-1);
 }
